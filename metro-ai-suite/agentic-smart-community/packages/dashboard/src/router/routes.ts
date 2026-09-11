@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: (C) 2026 Intel Corporation
 // SPDX-License-Identifier: Apache-2.0
 
-
 import Layout from "@/layout/Main.vue";
 
 export const routeList = [
@@ -16,6 +15,12 @@ export const routeList = [
         name: "Home",
         component: () => import("@/views/home/index.vue"),
         meta: { title: "Home" },
+      },
+      {
+        path: "/rag-chat",
+        name: "RagChat",
+        component: () => import("@/views/ragChat/index.vue"),
+        meta: { title: "Knowledge Graph" },
       },
     ],
   },
