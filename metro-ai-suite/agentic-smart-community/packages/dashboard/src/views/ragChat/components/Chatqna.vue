@@ -29,7 +29,7 @@ let chatbotConfiguration = reactive<ConfigType>({
   top_p: 0.95,
   top_k: 10,
   repetition_penalty: 1.03,
-  max_tokens: 2048,
+  max_tokens: 2500,
   stream: true,
 });
 const configDrawer = reactive<DialogType>({

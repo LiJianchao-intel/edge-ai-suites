@@ -14,7 +14,7 @@ const initialState = {
     top_p: 0.95,
     top_k: 10,
     repetition_penalty: 1.03,
-    max_tokens: 2048,
+    max_tokens: 2500,
     stream: true,
     chat_template_kwargs: {
       enable_thinking: false,
