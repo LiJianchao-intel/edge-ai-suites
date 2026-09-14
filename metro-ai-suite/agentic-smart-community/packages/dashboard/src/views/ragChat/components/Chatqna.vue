@@ -23,13 +23,13 @@ import { Local } from "@/utils/storage";
 const chatbotStore = ragChatbotAppStore();
 
 let chatbotConfiguration = reactive<ConfigType>({
-  top_n: 10,
+  top_n: 30,
   k: 200,
   temperature: 0.01,
   top_p: 0.95,
   top_k: 10,
   repetition_penalty: 1.03,
-  max_tokens: 4096,
+  max_tokens: 2048,
   stream: true,
 });
 const configDrawer = reactive<DialogType>({
