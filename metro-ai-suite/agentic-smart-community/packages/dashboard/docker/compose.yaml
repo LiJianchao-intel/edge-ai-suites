@@ -8,13 +8,8 @@ services:
       https_proxy: ${https_proxy:-}
       UI_PORT: ${UI_PORT:-8100}
       SERVER_HOST: ${SERVER_HOST:-${HOST_IP:-127.0.0.1}}
-      SMARTHOME_API_PORT: ${SMARTHOME_API_PORT:-18799}
-      STATS_API_PORT: ${STATS_API_PORT:-18000}
+      SMARTHOME_API_PORT: ${SMARTHOME_API_PORT:-3100}
       RAG_API_PORT: ${RAG_API_PORT:-16010}
       RAG_CHAT_PORT: ${RAG_CHAT_PORT:-16011}
-      VITE_CHATBOT_WS_PORT: ${VITE_CHATBOT_WS_PORT:-18789}
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/}
-      VITE_AUTH_TOKEN: ${VITE_AUTH_TOKEN:?VITE_AUTH_TOKEN is required}
-      VITE_CHATBOT_URL: ${VITE_CHATBOT_URL:-ws://localhost:18789/}
     restart: always
     network_mode: host

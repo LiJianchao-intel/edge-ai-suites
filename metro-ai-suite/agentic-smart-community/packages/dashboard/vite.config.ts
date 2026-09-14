@@ -20,24 +20,10 @@ const alias: Record<string, string> = {
 
 const viteConfig = defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  const serverHost =
-    process.env.SERVER_HOST || env.SERVER_HOST || "10.239.92.93";
-  const smartHome =
-    process.env.VITE_DEV_SMARTHOME_API_TARGET ||
-    env.VITE_DEV_SMARTHOME_API_TARGET ||
-    `http://${serverHost}:18799`;
-  const statsApiTarget =
-    process.env.VITE_DEV_STATS_API_TARGET ||
-    env.VITE_DEV_STATS_API_TARGET ||
-    `http://${serverHost}:18000`;
-  const ragApiTarget =
-    process.env.VITE_DEV_RAG_API_TARGET ||
-    env.VITE_DEV_RAG_API_TARGET ||
-    `http://${serverHost}:16010`;
-  const ragChatTarget =
-    process.env.VITE_DEV_RAG_CHAT_TARGET ||
-    env.VITE_DEV_RAG_CHAT_TARGET ||
-    `http://${serverHost}:16011`;
+  const serverHost = process.env.SERVER_HOST || env.SERVER_HOST || "localhost";
+  const smartHome = `http://${serverHost}:3100`;
+  const ragApiTarget = `http://${serverHost}:16010`;
+  const ragChatTarget = `http://${serverHost}:16011`;
   return {
     plugins: [
       vue(),
@@ -65,16 +51,17 @@ const viteConfig = defineConfig(({ mode }) => {
         "/api": {
           target: smartHome,
           changeOrigin: true,
-        },
-        "/v1/stats/": {
-          target: statsApiTarget,
-          changeOrigin: true,
+          ws: true,
         },
         "/v1/chatqna": {
           target: ragChatTarget,
           changeOrigin: true,
         },
         "/v1": {
+          target: ragApiTarget,
+          changeOrigin: true,
+        },
+        "/home/user/": {
           target: ragApiTarget,
           changeOrigin: true,
         },
