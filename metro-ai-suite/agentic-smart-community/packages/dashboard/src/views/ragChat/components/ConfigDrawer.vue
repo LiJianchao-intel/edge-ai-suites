@@ -170,13 +170,13 @@ const formRef = ref<FormInstance>();
 const drawerVisible = ref<boolean>(true);
 const submitLoading = ref<boolean>(false);
 const {
-  top_n = 0,
-  k = 0,
+  top_n = 30,
+  k = 200,
   temperature = 0.01,
   top_p = 0.95,
   top_k = 10,
   repetition_penalty = 1.03,
-  max_tokens = 4096,
+  max_tokens = 2500,
   stream = true,
 } = props.drawerData;
 
