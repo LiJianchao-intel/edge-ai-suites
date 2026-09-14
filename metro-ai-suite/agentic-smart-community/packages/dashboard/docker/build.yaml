@@ -2,5 +2,5 @@ services:
   smart-community-ui:
     image: ${REGISTRY:-intel}/smart-community-ui:${TAG:-latest}
     build:
-      context: ../..
-      dockerfile: ./ui/docker/Dockerfile.ui
+      context: ..
+      dockerfile: docker/Dockerfile.ui

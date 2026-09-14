@@ -13,17 +13,17 @@ ENV VITE_AUTH_TOKEN=__VITE_AUTH_TOKEN__
 ENV VITE_CHATBOT_URL=__VITE_CHATBOT_URL__
 ENV VITE_CHATBOT_WS_PORT=__VITE_CHATBOT_WS_PORT__
 
-COPY ./ui/package*.json ./
+COPY package*.json ./
 RUN npm install
 
-COPY ./ui ./
+COPY . ./
 RUN npm run build
 
 FROM nginx:stable-alpine
 
 COPY --from=vue-app /home/user/ui/dist /usr/share/nginx/html
-COPY ./ui/docker/nginx.conf /etc/nginx/templates/default.conf.template
-COPY ./ui/docker/replace-env.sh /docker-entrypoint.d/99-replace-runtime-env.sh
+COPY docker/nginx.conf /etc/nginx/templates/default.conf.template
+COPY docker/replace-env.sh /docker-entrypoint.d/99-replace-runtime-env.sh
 
 RUN chmod +x /docker-entrypoint.d/99-replace-runtime-env.sh
 
