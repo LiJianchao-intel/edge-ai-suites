@@ -214,7 +214,8 @@ export class WebSocketChatService {
 
     socket.onclose = (event) => {
       this.clearConnectTimer();
-      this.flushPending(new Error("socket closed"));
+
+      console.info("socket closed");
       this.setStatus("disconnected");
       this.resetConnectionState();
 
@@ -236,7 +237,7 @@ export class WebSocketChatService {
     this.socket?.close();
     this.socket = null;
     this.resetConnectionState();
-    this.flushPending(new Error("socket closed"));
+    console.info("socket closed");
   }
 
   cancel() {

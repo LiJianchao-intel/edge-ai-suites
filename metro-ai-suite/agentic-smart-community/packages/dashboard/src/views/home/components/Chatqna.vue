@@ -163,7 +163,9 @@
             :key="framework.id"
             type="button"
             class="framework-option"
-            :class="{ active: framework.id === selectedFrameworkId && frameworkFormOpen }"
+            :class="{
+              active: framework.id === selectedFrameworkId && frameworkFormOpen,
+            }"
             @click="selectFramework(framework)"
           >
             {{ framework.label }}
@@ -172,7 +174,9 @@
 
         <div v-if="frameworkFormOpen" class="framework-form flex-column">
           <div class="framework-field flex-column">
-            <label for="agent-framework-url">{{ $t("chat.frameworkUrl") }}</label>
+            <label for="agent-framework-url">{{
+              $t("chat.frameworkUrl")
+            }}</label>
             <a-input
               id="agent-framework-url"
               v-model:value.trim="frameworkUrl"
@@ -180,7 +184,9 @@
             />
           </div>
           <div class="framework-field flex-column">
-            <label for="agent-framework-token">{{ $t("chat.frameworkToken") }}</label>
+            <label for="agent-framework-token">{{
+              $t("chat.frameworkToken")
+            }}</label>
             <a-input-password
               id="agent-framework-token"
               v-model:value="frameworkToken"
@@ -188,7 +194,9 @@
               autocomplete="off"
             />
           </div>
-          <div class="framework-cache-note">{{ $t("chat.frameworkCacheNote") }}</div>
+          <div class="framework-cache-note">
+            {{ $t("chat.frameworkCacheNote") }}
+          </div>
           <div class="framework-actions flex-end">
             <a-button @click="frameworkFormOpen = false">
               {{ $t("common.cancel") }}
@@ -265,7 +273,10 @@
             v-if="showScrollToBottomBtn && hasMessages"
             class="bottom-wrap vertical-center"
           >
-            <div class="to-bottom vertical-center" @click="scrollToBottom(true)">
+            <div
+              class="to-bottom vertical-center"
+              @click="scrollToBottom(true)"
+            >
               <ArrowDownOutlined />
             </div>
           </div>
@@ -363,8 +374,13 @@
                 >
                   <template #content>
                     <div class="model-settings-panel flex-column">
-                      <div class="control-panel-title">{{ $t("chat.model") }}</div>
-                      <div v-if="models.length" class="model-groups flex-column">
+                      <div class="control-panel-title">
+                        {{ $t("chat.model") }}
+                      </div>
+                      <div
+                        v-if="models.length"
+                        class="model-groups flex-column"
+                      >
                         <div
                           v-for="group in modelGroups"
                           :key="group.provider"
@@ -377,18 +393,23 @@
                             type="button"
                             class="model-option flex-between"
                             :class="{
-                              active: draftModel === `${model.provider}/${model.id}`,
+                              active:
+                                draftModel === `${model.provider}/${model.id}`,
                               unavailable: !model.available,
                             }"
                             :disabled="!model.available"
-                            @click="draftModel = `${model.provider}/${model.id}`"
+                            @click="
+                              draftModel = `${model.provider}/${model.id}`
+                            "
                           >
                             <span class="model-option-copy flex-column">
                               <strong>{{ model.name }}</strong>
                               <small>{{ model.id }}</small>
                             </span>
                             <CheckOutlined
-                              v-if="draftModel === `${model.provider}/${model.id}`"
+                              v-if="
+                                draftModel === `${model.provider}/${model.id}`
+                              "
                             />
                           </button>
                         </div>
@@ -398,7 +419,10 @@
                       </div>
                       <div class="settings-field flex-column">
                         <span>{{ $t("chat.reasoning") }}</span>
-                        <a-select v-model:value="draftThinkingLevel" size="small">
+                        <a-select
+                          v-model:value="draftThinkingLevel"
+                          size="small"
+                        >
                           <a-select-option
                             v-for="level in thinkingLevelOptions"
                             :key="level"
@@ -448,7 +472,9 @@
                   shape="circle"
                   size="large"
                   :disabled="
-                    (!isStreaming && !inputKeywords.trim() && !attachments.length) ||
+                    (!isStreaming &&
+                      !inputKeywords.trim() &&
+                      !attachments.length) ||
                     (!isStreaming && (!selectedSessionKey || isHistoryLoading))
                   "
                   @click="isStreaming ? handleStopChat() : handleSendMessage()"
@@ -740,8 +766,8 @@ const selectedAgentDisplayName = computed(() => {
   }
 
   return (
-    sessionGroups.value.find((group) => group.agentId === agentId)?.displayName ||
-    agentId
+    sessionGroups.value.find((group) => group.agentId === agentId)
+      ?.displayName || agentId
   );
 });
 const inputPlaceholder = computed(() => {
@@ -759,7 +785,9 @@ const currentModelLabel = computed(() => {
     return t("chat.model");
   }
 
-  const model = [session.modelProvider, session.model].filter(Boolean).join("/");
+  const model = [session.modelProvider, session.model]
+    .filter(Boolean)
+    .join("/");
   return `${model || t("chat.defaultModel")} · ${formatThinkingLevel(
     session.thinkingLevel || "off",
   )}`;
@@ -1134,7 +1162,9 @@ const fileToBase64 = async (file: File) => {
   let binary = "";
   const chunkSize = 32 * 1024;
   for (let offset = 0; offset < bytes.length; offset += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
+    binary += String.fromCharCode(
+      ...bytes.subarray(offset, offset + chunkSize),
+    );
   }
   return window.btoa(binary);
 };
@@ -1173,9 +1203,7 @@ const removeAttachment = (target: ChatAttachment) => {
 };
 
 const formatThinkingLevel = (level: string) => {
-  return level
-    ? level.charAt(0).toUpperCase() + level.slice(1)
-    : t("chat.off");
+  return level ? level.charAt(0).toUpperCase() + level.slice(1) : t("chat.off");
 };
 
 const syncModelSettingsDraft = () => {
@@ -1197,12 +1225,17 @@ const handleSaveModelSettings = async () => {
     return;
   }
 
-  const saved = await chatService.updateSessionSettings(selectedSessionKey.value, {
-    model: draftModel.value,
-    thinkingLevel: draftThinkingLevel.value,
-    fastMode:
-      draftFastMode.value === "auto" ? "auto" : draftFastMode.value === "fast",
-  });
+  const saved = await chatService.updateSessionSettings(
+    selectedSessionKey.value,
+    {
+      model: draftModel.value,
+      thinkingLevel: draftThinkingLevel.value,
+      fastMode:
+        draftFastMode.value === "auto"
+          ? "auto"
+          : draftFastMode.value === "fast",
+    },
+  );
   if (saved) {
     modelSettingsOpen.value = false;
     message.success(t("chat.modelSettingsSaved"));
@@ -1214,11 +1247,14 @@ const handleUseDefaultModel = async () => {
     return;
   }
 
-  const saved = await chatService.updateSessionSettings(selectedSessionKey.value, {
-    model: null,
-    thinkingLevel: null,
-    fastMode: null,
-  });
+  const saved = await chatService.updateSessionSettings(
+    selectedSessionKey.value,
+    {
+      model: null,
+      thinkingLevel: null,
+      fastMode: null,
+    },
+  );
   if (saved) {
     modelSettingsOpen.value = false;
     message.success(t("chat.defaultModelRestored"));
@@ -1346,27 +1382,39 @@ onMounted(async () => {
 
 .chat-header {
   .flex-between;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  gap: 16px;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border-main-color);
   background: var(--surface-glass-bg);
   backdrop-filter: blur(12px);
 
   .header-left {
+    flex: 1 1 auto;
+    min-width: 0;
     gap: 14px;
   }
 
   .assistant-copy {
+    min-width: 0;
     gap: 4px;
   }
 
   .assistant-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: var(--font-size-16);
     font-weight: 700;
     color: var(--font-main-color);
   }
 
   .assistant-subtitle {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: var(--font-size-11);
     color: var(--font-tip-color);
   }
@@ -1388,9 +1436,10 @@ onMounted(async () => {
   }
 
   .header-right {
+    flex: 0 1 auto;
     gap: 10px;
     min-width: 0;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
   }
 
@@ -2093,8 +2142,9 @@ onMounted(async () => {
   }
 }
 .selected-session-pill {
-  flex: 0 0 auto;
-  width: max-content;
+  flex: 1 1 auto;
+  min-width: 96px;
+  max-width: clamp(140px, 22vw, 260px);
   padding: 7px 12px;
   border-radius: 999px;
   border: 1px solid var(--border-primary);
@@ -2103,6 +2153,8 @@ onMounted(async () => {
   font-size: var(--font-size-12);
   font-weight: 600;
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 </style>
