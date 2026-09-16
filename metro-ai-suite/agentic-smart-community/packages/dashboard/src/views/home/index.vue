@@ -2,9 +2,21 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <template>
   <div class="home-layout-shell">
-    <div class="home-layout" :class="{ 'chat-collapsed': !isChatOpen }">
+    <div
+      class="home-layout"
+      :class="{
+        'chat-collapsed': !isChatOpen,
+        'left-collapsed': isApplianceMenuCollapsed,
+      }"
+    >
       <div class="layout-panel left-panel">
-        <AppliancesMenu :selected-date="selectedDate" />
+        <AppliancesMenu
+          :selected-date="selectedDate"
+          :collapsed="isApplianceMenuCollapsed"
+          @toggle-collapse="
+            isApplianceMenuCollapsed = !isApplianceMenuCollapsed
+          "
+        />
       </div>
       <div class="layout-panel center-panel">
         <VideoMonitorPanel
@@ -39,6 +51,7 @@ import { AppliancesMenu, Chatqna, VideoMonitorPanel } from "./components/index";
 
 const selectedDate = ref<Dayjs>(dayjs());
 const isChatOpen = ref(true);
+const isApplianceMenuCollapsed = ref(false);
 
 const handleSelectedDateChange = (value: Dayjs) => {
   selectedDate.value = value;
@@ -68,6 +81,14 @@ const handleSelectedDateChange = (value: Dayjs) => {
 /* Chat collapsed: the center video panel reclaims the right column's width. */
 .home-layout.chat-collapsed {
   grid-template-columns: 300px minmax(0, 1fr);
+}
+
+.home-layout.left-collapsed {
+  grid-template-columns: 64px minmax(0, 4fr) minmax(0, 3fr);
+}
+
+.home-layout.left-collapsed.chat-collapsed {
+  grid-template-columns: 64px minmax(0, 1fr);
 }
 
 /* Reopen tab — mirrors the Router card's monitor-trigger, docked to the right edge. */

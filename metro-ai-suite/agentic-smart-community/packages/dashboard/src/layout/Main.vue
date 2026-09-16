@@ -6,12 +6,16 @@
       <Header />
     </a-layout-header>
     <a-layout-content :class="{ 'layout-main': true, 'full-screen': isFull }">
-      <router-view class="layout-view" />
+      <router-view v-slot="{ Component }">
+        <KeepAlive>
+          <component :is="Component" class="layout-view" />
+        </KeepAlive>
+      </router-view>
     </a-layout-content>
   </a-layout>
 </template>
 <script lang="ts" setup name="Main">
-import { watch, onMounted } from "vue";
+import { KeepAlive, onMounted, watch } from "vue";
 import Header from "./Header.vue";
 
 const route = useRoute();

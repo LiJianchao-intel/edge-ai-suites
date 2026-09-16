@@ -22,8 +22,8 @@ const viteConfig = defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const serverHost = process.env.SERVER_HOST || env.SERVER_HOST || "localhost";
   const smartHome = `http://${serverHost}:3100`;
-  const ragApiTarget = `http://${serverHost}:16010`;
-  const ragChatTarget = `http://${serverHost}:16011`;
+  const ragApiTarget = `http://10.239.58.145:16010`;
+  const ragChatTarget = `http://10.239.58.145:16011`;
   return {
     plugins: [
       vue(),

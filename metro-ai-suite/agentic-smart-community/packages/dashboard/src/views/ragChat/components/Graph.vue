@@ -698,7 +698,7 @@ const applyRetrieveTrace = async (trace: RetrieveTraceData, token: number) => {
         },
         labelCfg: {
           style: {
-            fill: getThemeColor("--font-text-color"),
+            fill: getThemeColor("--font-main-color"),
           },
         },
       });
@@ -750,7 +750,7 @@ const applyRetrieveTrace = async (trace: RetrieveTraceData, token: number) => {
       },
       labelCfg: {
         style: {
-          fill: getThemeColor("--font-text-color"),
+          fill: getThemeColor("--font-main-color"),
         },
       },
     });

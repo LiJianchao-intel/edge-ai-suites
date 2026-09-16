@@ -45,6 +45,8 @@ export default {
     retry: "重试",
     retrying: "重试中",
     retryAll: "全部重试",
+    expand: "展开",
+    collapse: "折叠",
     ignore: "忽略",
     ignoreAll: "全部忽略",
     replace: "替换",

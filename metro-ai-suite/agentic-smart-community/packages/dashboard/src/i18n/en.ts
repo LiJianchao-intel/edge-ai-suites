@@ -46,6 +46,8 @@ export default {
     retry: "Retry",
     retrying: "Retrying",
     retryAll: "Retry All",
+    expand: "Expand",
+    collapse: "Collapse",
     ignore: "Ignore",
     ignoreAll: "Ignore All",
     replace: "Replace",

@@ -300,6 +300,7 @@ const handleSendMessage = async () => {
 
   const { currentSession = "" } = sessionStore;
   sessionStore.setResponseSessionId(currentSession);
+  updateSessionId();
 };
 
 const handleStopDisplay = () => {
@@ -353,6 +354,10 @@ const handleSessionDelete = (session: { id: string; name: string }) => {
 };
 
 const updateSessionId = () => {
+  if (route.name !== "RagChat") {
+    return;
+  }
+
   const sessionId = route.query?.sessionId;
   const storedSessionId = sessionStore.currentSession;
 
@@ -547,6 +552,10 @@ watch(
 watch(
   () => route.query?.sessionId,
   (sessionId) => {
+    if (route.name !== "RagChat") {
+      return;
+    }
+
     if (shouldIgnoreRouteChange.value || isCreatingNewSession.value) {
       shouldIgnoreRouteChange.value = false;
       return;
@@ -554,6 +563,9 @@ watch(
 
     if (sessionId) {
       const sessionIdStr = String(sessionId);
+      if (sessionIdStr === sessionStore.responseSession && inResponse.value) {
+        return;
+      }
       handleViewSessionDetail(sessionIdStr);
       if (sessionId !== sessionStore.responseSession) {
         inResponse.value = false;

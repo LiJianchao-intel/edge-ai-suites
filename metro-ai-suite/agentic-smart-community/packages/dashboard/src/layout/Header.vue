@@ -65,6 +65,7 @@ import SvgIcon from "@/components/SvgIcon.vue";
 import { themeAppStore } from "@/store/theme";
 import { HomeOutlined } from "@ant-design/icons-vue";
 import type { MenuInfo } from "ant-design-vue/es/menu/src/interface";
+import { reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
@@ -74,6 +75,10 @@ const router = useRouter();
 const themeStore = themeAppStore();
 const emit = defineEmits(["change-theme"]);
 const isDark = ref<boolean>(false);
+const lastVisitedPaths = reactive<Record<string, string>>({
+  "/home": "/home",
+  "/rag-chat": "/rag-chat",
+});
 
 const currentLanguage = computed(() => locale.value);
 const selectedKeys = computed(() => [
@@ -84,9 +89,19 @@ const handleMenuClick = ({ key }: MenuInfo) => {
   const nextPath = String(key);
 
   if (route.path !== nextPath) {
-    router.push(nextPath);
+    router.push(lastVisitedPaths[nextPath] || nextPath);
   }
 };
+
+watch(
+  () => route.fullPath,
+  (fullPath) => {
+    if (route.path in lastVisitedPaths) {
+      lastVisitedPaths[route.path] = fullPath;
+    }
+  },
+  { immediate: true },
+);
 
 const handleLanguageChange = ({ key }: MenuInfo) => {
   const nextLanguage = String(key);

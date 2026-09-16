@@ -1,8 +1,38 @@
 <!-- SPDX-FileCopyrightText: (C) 2026 Intel Corporation -->
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <template>
-  <div class="appliance-menu">
-    <div class="menu-wrapper flex-column">
+  <div class="appliance-menu" :class="{ collapsed }">
+    <button
+      class="menu-collapse-trigger"
+      type="button"
+      :aria-label="collapsed ? t('common.expand') : t('common.collapse')"
+      :title="collapsed ? t('common.expand') : t('common.collapse')"
+      @click="emit('toggle-collapse')"
+    >
+      <MenuOutlined />
+    </button>
+
+    <div v-if="collapsed" class="collapsed-appliance-list">
+      <div class="collapsed-device-label">DEVICE</div>
+      <a-tooltip
+        v-for="appliance in onlineAppliances"
+        :key="appliance.id"
+        placement="right"
+      >
+        <template #title>{{ appliance.name }}</template>
+        <button
+          type="button"
+          class="collapsed-appliance-trigger"
+          :class="{ active: appliance.id === expandedAppliance?.id }"
+          :aria-label="appliance.name"
+          @click="handleSelectAppliance(appliance.id)"
+        >
+          <VideoCameraOutlined />
+        </button>
+      </a-tooltip>
+    </div>
+
+    <div v-else class="menu-wrapper flex-column">
       <template v-if="applianceList.length">
         <div class="menu-section flex-column">
           <div class="section-kicker">
@@ -59,10 +89,17 @@
               :aria-expanded="showOfflineAppliances"
               @click="showOfflineAppliances = !showOfflineAppliances"
             >
-              <span>{{ $t("smartCommunity.offlineCameras") }} ({{ offlineAppliances.length }})</span>
+              <span
+                >{{ $t("smartCommunity.offlineCameras") }} ({{
+                  offlineAppliances.length
+                }})</span
+              >
               <DownOutlined :class="{ open: showOfflineAppliances }" />
             </button>
-            <div v-if="showOfflineAppliances" class="appliance-tabs flex-column">
+            <div
+              v-if="showOfflineAppliances"
+              class="appliance-tabs flex-column"
+            >
               <div
                 v-for="appliance in offlineAppliances"
                 :key="appliance.id"
@@ -79,8 +116,12 @@
                   >
                     <span class="appliance-tab-indicator"></span>
                     <span class="appliance-tab-body flex-column">
-                      <span class="appliance-tab-name">{{ appliance.name }}</span>
-                      <span class="appliance-tab-meta">{{ appliance.location }}</span>
+                      <span class="appliance-tab-name">{{
+                        appliance.name
+                      }}</span>
+                      <span class="appliance-tab-meta">{{
+                        appliance.location
+                      }}</span>
                     </span>
                     <span class="appliance-tab-status vertical-center">
                       <span class="status-dot"></span>{{ appliance.status }}
@@ -129,13 +170,23 @@ import type { Dayjs } from "dayjs";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { BarChartOutlined, DownOutlined } from "@ant-design/icons-vue";
+import {
+  BarChartOutlined,
+  DownOutlined,
+  MenuOutlined,
+  VideoCameraOutlined,
+} from "@ant-design/icons-vue";
 import { getMonitors } from "@/api/smartCommunity";
 import TokenSaving from "@/components/TokenSaving.vue";
 import { getSmartCommunitySourceMeta } from "../deviceMeta";
 
 const props = defineProps<{
   selectedDate: Dayjs;
+  collapsed?: boolean;
+}>();
+
+const emit = defineEmits<{
+  "toggle-collapse": [];
 }>();
 
 interface ApplianceInfo {
@@ -185,7 +236,9 @@ const formatName = (monitor: ApplianceInfo) => {
   }
 
   const preset = getAppliancePreset(monitor.id);
-  return preset?.name || `${t("smartCommunity.applianceGenericName")} ${monitor.id}`;
+  return (
+    preset?.name || `${t("smartCommunity.applianceGenericName")} ${monitor.id}`
+  );
 };
 
 const buildApplianceInfo = (monitor: ApplianceInfo): ApplianceInfo => {
@@ -197,7 +250,8 @@ const buildApplianceInfo = (monitor: ApplianceInfo): ApplianceInfo => {
     ...monitor,
     name: formatName(monitor),
     location,
-    status: monitor.status || preset?.status || t("smartCommunity.deviceOnline"),
+    status:
+      monitor.status || preset?.status || t("smartCommunity.deviceOnline"),
   };
 };
 
@@ -217,6 +271,8 @@ const selectedSourceId = computed(() => {
 const selectedDateLabel = computed(() => {
   return props.selectedDate.format("YYYY-MM-DD");
 });
+
+const collapsed = computed(() => props.collapsed ?? false);
 
 const expandedAppliance = computed(() => {
   if (!selectedSourceId.value) {
@@ -295,11 +351,94 @@ onUnmounted(() => {
 
 <style scoped lang="less">
 .appliance-menu {
+  position: relative;
   height: 100%;
   background: var(--surface-panel-bg);
   border: 1px solid var(--border-primary);
   border-radius: 24px;
-  overflow: hidden;
+  overflow: visible;
+}
+
+.menu-collapse-trigger {
+  position: absolute;
+  top: 34%;
+  right: -15px;
+  z-index: 4;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--border-main-color);
+  border-radius: 50%;
+  background: var(--surface-card-bg);
+  color: var(--font-text-color);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.menu-collapse-trigger:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primaryBg);
+  color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--surface-panel-bg);
+}
+
+.collapsed-appliance-list {
+  height: 100%;
+  padding: 18px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.collapsed-device-label {
+  width: 100%;
+  padding: 2px 0 8px;
+  color: var(--font-tip-color);
+  font-size: var(--font-size-10);
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.collapsed-appliance-trigger {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  background: var(--surface-card-bg);
+  color: var(--font-text-color);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.collapsed-appliance-trigger:hover,
+.collapsed-appliance-trigger.active {
+  border-color: var(--color-primary);
+  background: var(--color-primaryBg);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.collapsed-appliance-trigger :deep(.intelicon) {
+  font-size: 19px;
 }
 
 .menu-wrapper {
