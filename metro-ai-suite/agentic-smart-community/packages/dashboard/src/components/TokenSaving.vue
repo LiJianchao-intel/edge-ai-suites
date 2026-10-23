@@ -118,7 +118,15 @@ import {
   SyncOutlined,
   CloseOutlined,
 } from "@ant-design/icons-vue";
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  onActivated,
+  onBeforeUnmount,
+  onDeactivated,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import {
   getTokenStats,
@@ -268,6 +276,10 @@ const fetchTaskTokenStats = async () => {
 };
 
 const fetchStats = async (showRefreshing = false) => {
+  if (pollTimer === undefined) {
+    return;
+  }
+
   if (showRefreshing) {
     isRefreshing.value = true;
   }
@@ -294,14 +306,18 @@ const fetchStats = async (showRefreshing = false) => {
 };
 
 const startPolling = () => {
-  stopPolling();
+  if (pollTimer !== undefined) {
+    return;
+  }
+
   pollTimer = window.setInterval(() => {
     void fetchStats();
   }, POLL_INTERVAL);
+  void fetchStats(true);
 };
 
 const stopPolling = () => {
-  if (!pollTimer) {
+  if (pollTimer === undefined) {
     return;
   }
 
@@ -394,10 +410,9 @@ const handleClose = () => {
   emit("close");
 };
 
-onMounted(() => {
-  void fetchStats(true);
-  startPolling();
-});
+onMounted(startPolling);
+onActivated(startPolling);
+onDeactivated(stopPolling);
 
 watch(
   () => [props.selectedDate, props.selectedSourceId],
@@ -406,9 +421,7 @@ watch(
   },
 );
 
-onBeforeUnmount(() => {
-  stopPolling();
-});
+onBeforeUnmount(stopPolling);
 </script>
 
 <style scoped lang="less">
